@@ -1,0 +1,16 @@
+# Development dependencies (in addition to requirements.txt)
+
+# Testing
+pytest
+pytest-asyncio
+pytest-cov
+httpx
+
+# Code quality
+black
+mypy
+flake8
+isort
+
+# Type stubs
+types-python-dateutil

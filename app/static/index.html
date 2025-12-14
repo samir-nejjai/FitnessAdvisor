@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Execution Coach - AI-Powered Goal Achievement</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Agentic Execution Coach</h1>
+            <p class="tagline">Your AI system for realistic planning and consistent execution</p>
+            <p class="subtitle">No motivation speeches. Just realistic plans that adapt to your reality.</p>
+        </header>
+
+        <!-- Welcome Banner for New Users -->
+        <div id="welcomeBanner" class="welcome-banner">
+            <div class="welcome-content">
+                <h2>👋 Welcome! Here's how it works:</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Set Your Goal</h3>
+                        <p>Tell us what you want to achieve and your real constraints</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Get AI-Generated Plan</h3>
+                        <p>Receive a realistic weekly plan (3-5 priorities max)</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Execute & Check-In</h3>
+                        <p>Do the work, then report what actually happened</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h3>Adapt & Improve</h3>
+                        <p>System detects deviations and adjusts your plan</p>
+                    </div>
+                </div>
+                <button id="getStartedBtn" class="btn btn-large btn-primary">Get Started →</button>
+            </div>
+        </div>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="setup">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">Setup Profile</span>
+            </button>
+            <button class="tab-btn" data-tab="plan">
+                <span class="tab-icon">📋</span>
+                <span class="tab-label">Weekly Plan</span>
+            </button>
+            <button class="tab-btn" data-tab="checkin">
+                <span class="tab-icon">✅</span>
+                <span class="tab-label">Reality Check-In</span>
+            </button>
+            <button class="tab-btn" data-tab="status">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">Dashboard</span>
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <span class="tab-icon">📈</span>
+                <span class="tab-label">History</span>
+            </button>
+        </nav>
+
+        <!-- Setup Tab -->
+        <div id="setup" class="tab-content active">
+            <div class="section-header">
+                <h2>📝 Define Your Objective & Constraints</h2>
+                <p class="section-description">Be honest about your constraints. The AI needs reality, not wishes.</p>
+            </div>
+            
+            <div id="profileStatus" class="status-box"></div>
+            
+            <form id="profileForm">
+                <fieldset class="form-section">
+                    <legend>🎯 What You Want to Achieve</legend>
+                    
+                    <div class="form-group">
+                        <label for="objective">
+                            Primary Objective *
+                            <span class="label-hint">Be specific. What's the end goal?</span>
+                        </label>
+                        <textarea id="objective" rows="3" required 
+                            placeholder="Example: Complete a half-marathon in 12 weeks while maintaining my strength training routine"></textarea>
+                        <small class="field-help">💡 Tip: Include timelines and what success looks like</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="duration">
+                                Duration (weeks) *
+                                <span class="label-hint">How long is this objective?</span>
+                            </label>
+                            <input type="number" id="duration" min="1" max="52" value="12" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="availableHours">
+                                Available Hours per Week *
+                                <span class="label-hint">Be realistic!</span>
+                            </label>
+                            <input type="number" id="availableHours" min="1" max="168" step="0.5" value="10" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>🚫 Your Real Constraints</legend>
+                    <p class="section-note">These help the AI create plans that won't fail in week 2.</p>
+                    
+                    <div class="form-group">
+                        <label for="fixedCommitments">
+                            Fixed Time Commitments
+                            <span class="label-hint">When you're NOT available</span>
+                        </label>
+                        <textarea id="fixedCommitments" rows="3" 
+                            placeholder="Example:&#10;• Work meetings Mon-Fri 9am-5pm&#10;• Family dinner every night 6-7pm&#10;• Kids' soccer practice Tue/Thu 4-6pm"></textarea>
+                        <small class="field-help">Enter one per line</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="physicalConstraints">
+                            Physical Limitations
+                            <span class="label-hint">Injuries, health conditions, etc.</span>
+                        </label>
+                        <textarea id="physicalConstraints" rows="2" 
+                            placeholder="Example:&#10;• Lower back injury - avoid heavy deadlifts&#10;• Need 8 hours sleep minimum"></textarea>
+                        <small class="field-help">The AI will plan around these</small>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>📏 Non-Negotiable Rules</legend>
+                    <p class="section-note">Hard limits that cannot be broken.</p>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minFrequency">
+                                Minimum Training Frequency *
+                                <span class="label-hint">Sessions per week</span>
+                            </label>
+                            <input type="number" id="minFrequency" min="1" max="7" value="3" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="restDays">
+                                Mandatory Rest Days *
+                                <span class="label-hint">When you won't train</span>
+                            </label>
+                            <input type="text" id="restDays" value="Sunday" required 
+                                placeholder="Sunday, Wednesday">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="otherRules">
+                            Other Rules
+                            <span class="label-hint">Any other boundaries</span>
+                        </label>
+                        <textarea id="otherRules" rows="2" 
+                            placeholder="Example:&#10;• No training after 9 PM&#10;• Must have one full rest day between intense sessions"></textarea>
+                    </div>
+                </fieldset>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        💾 Save Profile & Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Weekly Plan Tab -->
+        <div id="plan" class="tab-content">
+            <div class="section-header">
+                <h2>📋 Your Weekly Execution Plan</h2>
+                <p class="section-description">AI-generated plan based on your constraints. Max 3-5 priorities per week.</p>
+            </div>
+            
+            <div id="planGuide" class="info-banner">
+                <h3>🤖 How AI Planning Works:</h3>
+                <ul>
+                    <li><strong>Realistic:</strong> Plans respect your time and constraints</li>
+                    <li><strong>Trade-offs:</strong> Explicitly states what's excluded and why</li>
+                    <li><strong>Daily Actions:</strong> One clear action per day (not overwhelming)</li>
+                    <li><strong>Adaptive:</strong> Plans adjust based on your reality checks</li>
+                </ul>
+            </div>
+            
+            <div class="action-bar">
+                <button id="generatePlanBtn" class="btn btn-primary">
+                    <span>✨ Generate New Plan</span>
+                </button>
+                <div class="date-selector">
+                    <label for="weekStartDate">Week Starting:</label>
+                    <input type="date" id="weekStartDate" class="date-input">
+                </div>
+            </div>
+            
+            <div id="planLoading" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>🤖 AI is analyzing your profile and generating a realistic plan...</p>
+                <p class="loading-detail">Analyzing constraints, generating priorities, and creating daily actions</p>
+                <p class="loading-time">This takes 30-60 seconds</p>
+            </div>
+            
+            <div id="planContent"></div>
+        </div>
+
+        <!-- Check-In Tab -->
+        <div id="checkin" class="tab-content">
+            <div class="section-header">
+                <h2>✅ Weekly Reality Check</h2>
+                <p class="section-description">Track actual execution vs plan - no judgment, just data.</p>
+            </div>
+            
+            <div class="info-banner info-banner-warning">
+                <h3>🎯 How This Works:</h3>
+                <p>Check off what you've completed so far this week. The system will analyze your progress and, if needed, adapt the remaining days to maximize your success.</p>
+                <ul>
+                    <li><strong>Mark completions:</strong> Check off daily actions you've finished</li>
+                    <li><strong>Explain deviations:</strong> Tell us what disrupted your plan</li>
+                    <li><strong>Get adapted plan:</strong> Remaining days will be adjusted based on reality</li>
+                </ul>
+            </div>
+            
+            <div id="weekProgress" class="week-progress" style="display: none;">
+                <h3>📅 This Week's Progress</h3>
+                <p class="current-day-indicator"></p>
+                <div id="dailyCheckboxes" class="daily-checkboxes"></div>
+            </div>
+            
+            <form id="checkinForm">
+                <div class="form-group">
+                    <label for="weekId">
+                        Week ID *
+                        <span class="label-hint">Auto-filled from your current plan</span>
+                    </label>
+                    <input type="text" id="weekId" readonly placeholder="Generate a plan first">
+                    <small class="field-help">Format: YYYY-Www (e.g., 2025-W50)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="energyLevel">
+                        Energy Level This Week *
+                        <span class="label-hint">How have you felt so far?</span>
+                    </label>
+                    <select id="energyLevel" required>
+                        <option value="">-- Select --</option>
+                        <option value="very_low">😫 Very Low (Exhausted)</option>
+                        <option value="low">😔 Low (Tired)</option>
+                        <option value="moderate" selected>😐 Moderate (Normal)</option>
+                        <option value="high">😊 High (Good energy)</option>
+                        <option value="very_high">🚀 Very High (Excellent)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="unexpectedEvents">
+                        Unexpected Events
+                        <span class="label-hint">What threw off your plan?</span>
+                    </label>
+                    <textarea id="unexpectedEvents" rows="4" 
+                        placeholder="Example:&#10;• Emergency work deadline on Tuesday&#10;• Got sick Wednesday-Thursday&#10;• Family visit disrupted weekend schedule"></textarea>
+                    <small class="field-help">The AI uses this to understand context and adapt the remaining days</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        🔄 Analyze & Adapt Remaining Days
+                    </button>
+                </div>
+            </form>
+            
+            <div id="deviationReport" class="report-box" style="display: none;"></div>
+            <div id="adaptedPlan" class="report-box" style="display: none;"></div>
+        </div>
+
+        <!-- Status Tab -->
+        <div id="status" class="tab-content">
+            <div class="section-header">
+                <h2>📊 Current Status Dashboard</h2>
+                <p class="section-description">Your execution overview at a glance</p>
+            </div>
+            <div id="statusContent"></div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-content">
+            <div class="section-header">
+                <h2>📈 Execution History</h2>
+                <p class="section-description">Track your pattern of execution over time</p>
+            </div>
+            <div id="historyContent"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
