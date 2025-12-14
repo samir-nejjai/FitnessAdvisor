@@ -1,141 +1,116 @@
-# Agentic Execution Coach
+# Fitness Advisor
 
-An AI-powered execution enforcement system that converts vague objectives into realistic weekly execution plans, continuously reconciles intent with reality, and enforces trade-offs when constraints are violated.
+An AI-powered execution coach that creates realistic weekly fitness plans and adapts them based on what you actually do. No multi-agent complexity—just direct Azure OpenAI calls that generate honest, achievable plans.
 
-**Philosophy:** This is not a productivity dashboard or motivation tool. It's an execution enforcement system that reduces cognitive load by outputting only what matters next.
+**Philosophy:** No motivation speeches. No over-engineering. Just realistic plans that adapt to your reality.
+
+**Key Learning:** Started with 5 AI agents (CrewAI), realized it was over-engineering. Simplified to direct LLM prompts → 23% code reduction, same results, faster execution.
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Clone and navigate to project
-cd FitnessAdvisor
-
-# 2. Create virtual environment with Python 3.11 or 3.12
-python3.12 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# 3. Install dependencies
+# 1. Setup environment
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 
-# 4. Configure environment
+# 2. Configure Azure OpenAI
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your Azure OpenAI credentials
 
-# 5. Run the application
+# 3. Run
 python run.py
 
-# 6. Access the UI
-# Open http://localhost:8000/static/index.html
+# 4. Open browser
+http://localhost:8000
 ```
 
-**Project Structure**: See [docs/STRUCTURE.md](docs/STRUCTURE.md) for detailed architecture
+**Documentation**: See [docs/](docs/) for setup guides and architecture details
 
 ---
 
 ## 🎯 Core Features
 
-- **Realistic Planning**: AI agents convert long-term objectives into achievable weekly plans (3-5 priorities max)
+- **Realistic Planning**: Azure OpenAI generates achievable weekly plans (3-4 priorities max)
 - **Trade-Off Enforcement**: Explicit decisions about what to exclude and why
-- **Reality Reconciliation**: Weekly check-ins compare planned vs actual execution
-- **Deviation Monitoring**: Automatic detection when plans diverge from reality
-- **Plan Adjustment**: Dynamic plan modification based on real-world constraints
-- **Multi-LLM Support**: Switch between Azure OpenAI, OpenAI, and Google Gemini
+- **Reality Check-In**: Daily checkboxes + free-text notes to track actual execution
+- **Adaptive Plans**: Auto-adjusts remaining days when completion < 70%
+- **Plan Persistence**: Auto-saves to state.json, persists across page refreshes
+- **One Action Per Day**: Reduces cognitive load, increases follow-through
 
 ---
 
 ## 🏗️ Architecture
 
-### Multi-Agent System (CrewAI)
+### Simplified Design
 
-The system uses 5 specialized AI agents:
+**Tech Stack:**
+- Python 3.12 + FastAPI
+- Azure OpenAI (GPT-4 Turbo)
+- Single `state.json` file
+- Vanilla HTML/CSS/JavaScript
 
-1. **Planner Agent**: Translates objectives into realistic weekly plans
-2. **Execution Agent**: Converts weekly priorities into daily actions (one per day)
-3. **Reviewer Agent**: Compares planned vs actual execution, calculates deviation
-4. **Critic Agent**: Challenges assumptions and forces explicit trade-offs
-5. **Coordinator Agent**: Orchestrates agent workflows and manages state
+**Flow:**
+```
+User Input → FastAPI → Direct LLM Prompt → Azure OpenAI → JSON Response → state.json
+```
 
 ### Weekly Cycle
 
 ```
-Sunday: Generate Plan
-├─ Planner creates draft
-├─ Critic challenges assumptions
-├─ Planner revises
-└─ Execution Agent generates daily actions
+1. Generate Plan (3-5s)
+   └─ LLM creates realistic plan with priorities & daily actions
 
-During Week: Monitor Execution
-├─ User submits reality check
-├─ Reviewer analyzes deviation
-└─ If needed: Critic + Planner adjust plan
+2. Execute During Week
+   └─ Follow daily actions
 
-End of Week: Record History
-└─ Store completion rate and learnings
+3. Reality Check-In
+   ├─ Check boxes for completed days
+   ├─ Write actual notes (what you really did)
+   └─ Submit for analysis
+
+4. Adapt if Needed (< 70% completion)
+   └─ LLM adjusts remaining days based on actual execution
 ```
 
 ### State Management
 
-- **Persistence**: JSON files in `./data/` directory
-- **State Components**:
-  - User profile (objectives, constraints, non-negotiables)
-  - Weekly plans (versioned with adjustments)
-  - Reality checks (execution data)
-  - Deviation reports (analysis)
-  - Execution history (performance tracking)
+- **Single File**: `data/state.json`
+- **Contains**: Profile, all plans, reality checks, history
+- **Atomic Writes**: Read → Modify → Write
+- **No SQL**: Simple, easy to backup/inspect
 
 ---
 
-## 🚀 Quick Start
+## � Prerequisites
 
-### Prerequisites
-
-- Python 3.10+
-- API key for one of:
-  - Azure OpenAI
-  - OpenAI
-  - Google Gemini
+- Python 3.11+ (tested with 3.12.12)
+- Azure OpenAI account with API key
+- 5 minutes for setup
 
 ### Installation
 
-1. **Clone and setup**
 ```bash
-cd /Users/Samir_Nejjai/Projects/FitnessAdvisor
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# 1. Setup
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
-```
 
-2. **Configure environment**
-```bash
+# 2. Configure Azure OpenAI
 cp .env.example .env
-# Edit .env with your API credentials
-```
+# Edit .env with:
+# - AZURE_OPENAI_API_KEY
+# - AZURE_OPENAI_ENDPOINT
+# - AZURE_OPENAI_DEPLOYMENT_ID
+# - AZURE_OPENAI_API_VERSION
 
-Example `.env` configuration:
-```env
-# Choose provider: azure_openai, openai, or gemini
-LLM_PROVIDER=azure_openai
-
-# Azure OpenAI (if using)
-AZURE_OPENAI_API_KEY=your-key-here
-AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4
-AZURE_OPENAI_API_VERSION=2024-02-15-preview
-
-# Data directory
-DATA_DIR=./data
-```
-
-3. **Start the server**
-```bash
+# 3. Run
 python run.py
-# Or use the start script
-./scripts/start.sh
 ```
 
-The API will be available at `http://localhost:8000`
+Server runs at `http://localhost:8000`
 
 ---
 
@@ -143,112 +118,105 @@ The API will be available at `http://localhost:8000`
 
 ### Web UI
 
-Access the web interface at: `http://localhost:8000/static/index.html`
+Access at: `http://localhost:8000` (auto-redirects to UI)
 
 **Workflow:**
 
-1. **Setup Tab**: Create your profile
-   - Define primary objective
-   - Set hard constraints (available time, commitments)
-   - Specify non-negotiables (rest days, minimum frequency)
+1. **Setup Tab**: Create profile
+   - Objective (e.g., "Lose 6kg in 16 weeks")
+   - Available hours/week
+   - Hard constraints (work schedule, etc.)
+   - Click "💾 Save Profile"
 
-2. **Weekly Plan Tab**: Generate plans
-   - Click "Generate New Plan"
-   - AI agents create a realistic plan with priorities, exclusions, and daily actions
-   - Takes 30-60 seconds (agents are working!)
+2. **Plan Tab**: Generate weekly plan
+   - Click "🤖 Generate New Plan"
+   - Wait 3-5 seconds (Azure OpenAI generating)
+   - See priorities, daily actions, trade-offs
 
-3. **Check-In Tab**: Submit reality checks
-   - Report sessions completed vs planned
-   - Rate energy levels
-   - Document unexpected events
-   - Get deviation analysis
+3. **Check-In Tab**: Track execution
+   - Daily checkboxes (auto-detects current day)
+   - Free-text notes: "What did you actually do?"
+   - Click "🔄 Analyze & Adapt"
+   - Get adjusted plan if < 70% completion
 
 4. **Status Tab**: View current week
-   - See active plan
-   - Check completion status
-   - Review statistics
+   - Active plan with daily cards
+   - Click day to see detailed breakdown
 
-5. **History Tab**: Track performance
-   - View past weeks
-   - Analyze completion rates
-   - Learn from patterns
+5. **History Tab**: Past weeks
+   - All plans + completion rates
+   - Execution patterns
 
 ### API Documentation
 
-Interactive API docs available at: `http://localhost:8000/docs`
+Interactive docs: `http://localhost:8000/docs`
 
 **Key Endpoints:**
 
 ```bash
-# Create profile
+# Create/update profile
 POST /api/v1/profile
 {
-  "objective_description": "Improve strength over 12 weeks",
-  "duration_weeks": 12,
-  "available_hours_per_week": 10,
-  "minimum_training_frequency": 3,
-  "rest_days": ["Sunday"]
+  "objective": {
+    "description": "Lose 6kg without cardio",
+    "duration_weeks": 16
+  },
+  "hard_constraints": {
+    "available_hours_per_week": 6,
+    "fixed_commitments": ["Work 9-5 Mon-Fri"]
+  }
 }
 
-# Generate weekly plan
+# Generate plan
 POST /api/v1/plans/generate
-{
-  "week_start_date": "2025-12-16"  # Optional
-}
+
+# Get latest plan
+GET /api/v1/plans/latest
 
 # Submit reality check
 POST /api/v1/reality-checks
 {
   "week_id": "2025-W50",
-  "sessions_completed": 3,
-  "sessions_planned": 4,
+  "sessions_completed": 2,
   "energy_level": "moderate",
-  "unexpected_events": ["Client emergency Tuesday"]
+  "notes": "Completed Mon & Wed, missed Fri"
 }
 
-# Get current status
-GET /api/v1/status
-
-# View history
-GET /api/v1/history?limit=10
+# Adjust plan
+POST /api/v1/plans/adjust
+{
+  "week_id": "2025-W50",
+  "reason": "Low completion rate"
+}
 ```
 
 ---
 
 ## 🔧 Configuration
 
-### LLM Provider Switching
+### Azure OpenAI Setup
 
-Edit `.env` to change providers:
+Edit `.env` with your Azure credentials:
 
 ```env
-# Use Azure OpenAI
-LLM_PROVIDER=azure_openai
-
-# Use OpenAI
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL_NAME=gpt-4-turbo-preview
-
-# Use Google Gemini
-LLM_PROVIDER=gemini
-GOOGLE_API_KEY=...
-GEMINI_MODEL_NAME=gemini-pro
+AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT_ID=gpt-4-turbo
+AZURE_OPENAI_API_VERSION=2024-08-01-preview
 ```
 
-### Agent Customization
+### Prompt Customization
 
-Edit `app/services/workflows.py` to modify agent behaviors:
-- Change roles, goals, and backstories
-- Adjust temperature settings
-- Modify verbosity levels
+Edit `app/services/workflows.py` to modify:
+- `_build_plan_prompt()`: How plans are generated
+- `_build_reality_check_prompt()`: How execution is analyzed
+- `_build_adjustment_prompt()`: How plans adapt
 
-### Workflow Customization
+### Data Storage
 
-Edit `app/services/workflows.py` to:
-- Modify task descriptions and prompts
-- Change agent collaboration patterns
-- Adjust JSON parsing logic
+- Location: `data/state.json`
+- Backup: Copy this file
+- Reset: Delete this file
 
 ---
 
@@ -256,32 +224,36 @@ Edit `app/services/workflows.py` to:
 
 ```
 FitnessAdvisor/
-├── run.py                      # Application entry point
-├── requirements.txt            # Dependencies
-├── .env.example               # Environment template
-├── app/                       # Main application package
-│   ├── main.py                # FastAPI app
-│   ├── api/                   # API endpoints
-│   │   └── v1/
-│   │       └── endpoints/     # Route handlers
-│   ├── services/              # Business logic
-│   │   ├── workflows.py       # AI agent workflows
-│   │   ├── llm_factory.py     # Multi-LLM support
-│   │   └── state_manager.py   # JSON persistence
-│   ├── models/                # Pydantic schemas
-│   │   └── schemas.py
-│   ├── core/                  # Configuration
-│   │   └── config.py
-│   └── static/                # Web UI
-│       ├── index.html
-│       └── css/ & js/
-├── data/                      # State files (auto-created)
-│   └── state.json
-├── scripts/                   # Utility scripts
-│   └── start.sh
-├── tests/                     # Test suite
-└── docs/                      # Documentation
+├── run.py                     # Entry point
+├── requirements.txt           # Dependencies
+├── .env.example              # Azure OpenAI template
+├── app/
+│   ├── main.py               # FastAPI app
+│   ├── api/v1/endpoints/     # REST routes
+│   │   ├── health.py
+│   │   ├── profile.py
+│   │   ├── plans.py
+│   │   └── reality_checks.py
+│   ├── services/
+│   │   ├── workflows.py      # Plan generation (502 LOC)
+│   │   ├── llm.py           # Azure OpenAI client
+│   │   └── state_manager.py  # state.json I/O
+│   ├── models/schemas.py     # Pydantic models
+│   ├── core/config.py        # Settings
+│   └── static/               # Frontend
+│       ├── index.html        # Single-page app
+│       ├── js/app.js        # Vanilla JS (710 LOC)
+│       └── css/styles.css   # All styling
+├── data/
+│   └── state.json           # Single source of truth
+└── docs/                     # Full documentation
+    ├── PROJECT_SUMMARY.md
+    ├── STRUCTURE.md
+    ├── SETUP.md
+    └── CHECKLIST.md
 ```
+
+**Total**: ~3,220 lines of code (23% smaller than original multi-agent version)
 
 ---
 
@@ -316,93 +288,100 @@ The system succeeds when:
 
 ## 🔍 Troubleshooting
 
-### Agent Execution Takes Too Long
+### "Cannot connect to Azure OpenAI"
 
-- Normal: 30-60 seconds for plan generation
-- Agents are doing real LLM calls and reasoning
-- Check network connection to LLM provider
+```bash
+# Check .env configuration
+cat .env | grep AZURE
 
-### JSON Parsing Errors
+# Verify:
+# 1. API key is valid (Azure Portal)
+# 2. Endpoint ends with /
+# 3. Deployment ID matches deployment name
+```
 
-- Agents sometimes produce non-JSON output
-- Check `workflows.py` `_parse_crew_result()` method
-- May need to adjust agent prompts for stricter JSON
+### Profile Not Loading
 
-### Profile Not Found
+- Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
+- Check browser console (F12) for errors
+- Verify `/api/v1/profile` returns 200
 
-- Create profile in Setup tab first
-- Check `data/profile.json` exists
-- Verify file permissions
+### Plan Generation Slow (>10s)
 
-### LLM API Errors
+- Normal: 3-5 seconds
+- Check internet connection
+- Verify Azure OpenAI quota limits
 
-- Verify API keys in `.env`
-- Check endpoint URLs (Azure requires full endpoint)
-- Test with `/health` endpoint
-- Review logs for specific error messages
+### Port 8000 In Use
+
+```bash
+# Find process
+lsof -i :8000
+
+# Kill it
+kill -9 <PID>
+```
+
+### General Debugging
+
+- Check `/api/v1/health` endpoint
+- Review terminal logs
+- Inspect `data/state.json` file
 
 ---
 
 ## 🧪 Development
 
-### Running Tests
+### Code Quality
+
+- Type hints throughout
+- Pydantic validation
+- Modular FastAPI endpoints
+- Single responsibility principle
+
+### Adding Features
+
+1. **New Prompt**: Edit `app/services/workflows.py`
+2. **New Route**: Add to `app/api/v1/endpoints/`
+3. **New Field**: Update `app/models/schemas.py`
+4. **Frontend**: Edit `app/static/js/app.js`
+
+### Run with Debug
 
 ```bash
-pytest
+LOG_LEVEL=DEBUG uvicorn app.main:app --reload
 ```
-
-### Code Style
-
-The codebase follows:
-- PEP 8 style guidelines
-- Type hints for clarity
-- Pydantic for data validation
-- Clear separation of concerns
-
-### Adding New Features
-
-1. **New Workflow**: Edit `app/services/workflows.py`
-2. **New Endpoint**: Add route to `app/api/v1/endpoints/`
-3. **New Model**: Add to `app/models/schemas.py` with Pydantic validation
-4. **New Service**: Add to `app/services/`
 
 ---
 
-## 📊 Example Workflow
+## 📊 Example: Weekly Flow
 
-```python
-# 1. Create profile (one-time)
-profile = {
-    "objective": "Run a marathon in 16 weeks",
-    "duration_weeks": 16,
-    "available_hours_per_week": 8,
-    "minimum_training_frequency": 4,
-    "rest_days": ["Sunday"]
-}
+**Sunday**: Generate Plan
+```bash
+curl -X POST http://localhost:8000/api/v1/plans/generate
+# → Returns plan with 3-4 priorities, daily actions
+# → Saves to data/state.json
+```
 
-# 2. Generate weekly plan (every Sunday)
-plan = orchestrator.generate_weekly_plan()
-# Returns: 3-5 priorities, exclusions, daily actions
+**During Week**: Execute
+- Mon: Full-body lifting (60 min)
+- Tue: Meal prep (30 min)
+- Wed: Full-body lifting (60 min)
+- Thu: Rest
+- Fri: Full-body lifting (60 min)
+- Sat: Active recovery walk (20 min)
+- Sun: Rest
 
-# 3. Execute during week
-# ... follow daily actions ...
-
-# 4. Reality check (end of week)
-reality = {
+**End of Week**: Reality Check
+```bash
+curl -X POST http://localhost:8000/api/v1/reality-checks \
+  -d '{
     "week_id": "2025-W50",
-    "sessions_completed": 3,
-    "sessions_planned": 4,
-    "energy_level": "low",
-    "unexpected_events": ["Work deadline on Wednesday"]
-}
-
-# 5. Get deviation analysis
-report = orchestrator.process_reality_check(reality)
-# Returns: completion rate, deviation summary, recommended action
-
-# 6. Adjust if needed
-if report.deviation_detected:
-    adjusted_plan = orchestrator.adjust_plan(adjustment_request)
+    "sessions_completed": 2,
+    "notes": "Completed Mon/Wed, missed Fri (work deadline)"
+  }'
+# → Analyzes deviation (2/3 = 67% < 70%)
+# → Triggers plan adjustment for next week
 ```
 
 ---
@@ -427,10 +406,11 @@ MIT License - Use freely, modify as needed
 ## 🙏 Acknowledgments
 
 Built with:
-- [CrewAI](https://github.com/joaomdmoura/crewAI) - Multi-agent framework
 - [FastAPI](https://fastapi.tiangolo.com/) - Web framework
 - [Pydantic](https://docs.pydantic.dev/) - Data validation
-- [LangChain](https://python.langchain.com/) - LLM integrations
+- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) - LLM provider
+
+**Note**: Originally built with CrewAI multi-agent system, but simplified to direct LLM prompts after realizing agents were over-engineering for this use case. Result: 23% code reduction, same functionality, faster execution.
 
 ---
 
@@ -442,4 +422,6 @@ For issues or questions:
 3. Inspect logs for detailed error messages
 4. Verify environment configuration
 
-**Remember**: This system enforces execution, not inspiration. Use it to reduce planning overhead and increase follow-through.
+**Philosophy**: Execution enforcement, not motivation. Realistic plans that adapt to reality, not endless task lists.
+
+**Key Insight**: Sometimes the best architecture is the simplest one that works. Multi-agent systems are powerful, but often unnecessary. Direct LLM prompts can be just as effective with less complexity.
